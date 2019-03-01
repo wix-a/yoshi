@@ -2,6 +2,7 @@ const chalk = require('chalk');
 const stream = require('stream');
 const waitPort = require('wait-port');
 const child_process = require('child_process');
+const SocketServer = require('./socket-server');
 const { PORT } = require('./constants');
 const { getDevelopmentEnvVars } = require('yoshi-helpers/bootstrap-utils');
 
@@ -20,12 +21,15 @@ function serverLogPrefixer() {
 
 const inspectArg = process.argv.find(arg => arg.includes('--debug'));
 
-module.exports = class Server {
+module.exports = class ServerProcess {
   constructor({ serverFilePath }) {
+    this.socketServer = new SocketServer();
     this.serverFilePath = serverFilePath;
   }
 
   async initialize() {
+    await this.socketServer.initialize();
+
     this.child = child_process.fork(this.serverFilePath, {
       stdio: 'pipe',
       execArgv: [inspectArg]
@@ -42,7 +46,7 @@ module.exports = class Server {
     this.child.stdout.pipe(serverLogPrefixer()).pipe(process.stdout);
     this.child.stderr.pipe(serverLogPrefixer()).pipe(process.stderr);
 
-    this.child.on('message', this.onMessage.bind(this));
+    this.socketServer.on('message', this.onMessage.bind(this));
 
     await waitPort({
       port: PORT,
@@ -60,7 +64,7 @@ module.exports = class Server {
   }
 
   send(message) {
-    this.child.send(message);
+    this.socketServer.send(message);
 
     return new Promise((resolve, reject) => {
       this._resolve = resolve;
