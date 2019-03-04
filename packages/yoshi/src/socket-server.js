@@ -35,9 +35,7 @@ module.exports = class SocketServer extends EventEmitter {
   async initialize() {
     if (!this.server.listening) {
       await new Promise((resolve, reject) => {
-        this.server.listen(4000, 'localhost', err =>
-          err ? reject(err) : resolve(),
-        );
+        this.server.listen(4000, err => (err ? reject(err) : resolve()));
       });
     }
   }
