@@ -6,7 +6,7 @@ module.exports = class SocketServer extends EventEmitter {
   constructor() {
     super();
 
-    this.connection = null;
+    this.connections = [];
 
     this.server = http.createServer();
     this.socket = sockjs.createServer();
@@ -14,22 +14,26 @@ module.exports = class SocketServer extends EventEmitter {
     this.socket.installHandlers(this.server, { prefix: '/_yoshi_server_hmr_' });
 
     this.socket.on('connection', connection => {
-      this.connection = connection;
+      this.connections.push(connection);
 
       connection.on('data', message => {
         this.emit('message', JSON.parse(message));
       });
 
       connection.on('close', () => {
-        if (this.connection === connection) {
-          this.connection = null;
+        const index = this.connections.indexOf(connection);
+
+        if (index >= 0) {
+          this.connections.splice(index, 1);
         }
       });
     });
   }
 
   send(message) {
-    this.connection.write(JSON.stringify(message));
+    this.connections.forEach(connection => {
+      connection.write(JSON.stringify(message));
+    });
   }
 
   async initialize() {
