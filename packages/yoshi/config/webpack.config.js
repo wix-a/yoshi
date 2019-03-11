@@ -555,7 +555,11 @@ function createClientWebpackConfig({
 
     optimization: {
       minimize: !isDebug,
-      splitChunks: useSplitChunks ? splitChunksConfig : false,
+      // https://webpack.js.org/plugins/split-chunks-plugin
+      splitChunks: useSplitChunks
+        ? splitChunksConfig
+        : { chunks: 'async', name: false },
+      // https://webpack.js.org/plugins/module-concatenation-plugin
       concatenateModules: isProduction && !disableModuleConcat,
       minimizer: [
         new TerserPlugin({
