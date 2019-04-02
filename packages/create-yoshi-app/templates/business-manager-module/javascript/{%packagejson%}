@@ -53,8 +53,7 @@
   },
   "yoshi": {
     "entry": {
-      "{%projectName%}-module": "./module",
-      "{%projectName%}-app": "./client"
+      "module": "./module"
     },
     "externals": {
       "react": "React",
