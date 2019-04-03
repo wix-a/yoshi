@@ -2,8 +2,8 @@ import { ModuleId, PageComponentId, TModuleParams } from '@wix/business-manager-
 
 // Note: after submitting PR to BM you can remove the constant strings below
 // Note: should be in sync with the config inside your BM module ERB
-export const MODULE_ID = ModuleId.Realestate || '{%PROJECT_NAME%}';
-export const COMPONENT_NAME = PageComponentId.Realestate || '{%projectName%}';
+export const MODULE_ID = ModuleId.{%ProjectName%} || '{%PROJECT_NAME%}';
+export const COMPONENT_NAME = PageComponentId.{%ProjectName%} || '{%projectName%}';
 
 export interface IERBConfig {
   topology: {
