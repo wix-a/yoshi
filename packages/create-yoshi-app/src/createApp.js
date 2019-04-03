@@ -31,6 +31,8 @@ module.exports = async ({ workingDir, projectDirName, answersFile }) => {
     ? readAnswersFile(answersFile)
     : await runPrompt(workingDir);
 
+  console.log('Got answers', JSON.stringify(results));
+
   console.log(
     `\nCreating a new ${chalk.cyan(
       results.projectType,
@@ -80,5 +82,6 @@ module.exports = async ({ workingDir, projectDirName, answersFile }) => {
 };
 
 function readAnswersFile(answersFilePath) {
+  console.log(`Reading answers from file ${answersFilePath}`);
   return TemplateModel.fromJSON(fs.readJSONSync(answersFilePath));
 }
