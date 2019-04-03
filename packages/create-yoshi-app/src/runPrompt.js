@@ -21,7 +21,8 @@ module.exports = async (workingDir = process.cwd()) => {
   }
 
   // use the basename of the current working directory if projectName wasn't supplied
-  answers.projectName = answers.projectName || path.basename(workingDir);
+  answers.projectName =
+    answers.projectName || 'tmp' + path.basename(workingDir);
 
   return new TemplateModel(answers);
 };
