@@ -35,6 +35,7 @@ const {
   petriSpecsConfig,
   clientProjectName,
   clientFilesPath,
+  experimentalBuildHtml,
 } = require('yoshi-config');
 const wixDepCheck = require('../tasks/dep-check');
 
@@ -131,7 +132,7 @@ module.exports = async () => {
   const clientOptimizedStats = webpackStats.stats[1];
 
   // Generate `manifest.[version].json`
-  if (inTeamCity) {
+  if (inTeamCity && experimentalBuildHtml) {
     const assetsJson = clientOptimizedStats.compilation.chunkGroups.reduce(
       (acc, chunk) => {
         acc[chunk.name] = [
