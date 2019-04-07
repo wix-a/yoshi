@@ -20,6 +20,7 @@ const {
   createServerWebpackConfig,
 } = require('../../config/webpack.config');
 const { inTeamCity: checkInTeamCity } = require('yoshi-helpers/queries');
+const { getProjectArtifactVersion } = require('yoshi-helpers/utils');
 const {
   ROOT_DIR,
   SRC_DIR,
@@ -29,7 +30,6 @@ const {
   STATICS_DIR,
   ASSETS_DIR,
   STATS_FILE,
-  ASSETS_MANIFEST_FILE,
 } = require('yoshi-config/paths');
 const {
   petriSpecsConfig,
@@ -130,7 +130,7 @@ module.exports = async () => {
 
   const clientOptimizedStats = webpackStats.stats[1];
 
-  // Generate `manifest.json`
+  // Generate `manifest.[version].json`
   if (inTeamCity) {
     const assetsJson = clientOptimizedStats.compilation.chunkGroups.reduce(
       (acc, chunk) => {
@@ -142,12 +142,12 @@ module.exports = async () => {
             (files, child) => [
               ...files,
               ...child.files
-                // Resolve into an absolute path, relatively to publicPath
-                .filter(file =>
-                  url.resolve(clientOptimizedConfig.output.publicPath, file),
-                )
                 // Remove map files
-                .map(file => !file.endsWith('.map')),
+                .filter(file => !file.endsWith('.map'))
+                // Resolve into an absolute path, relatively to publicPath
+                .map(file =>
+                  url.resolve(clientOptimizedConfig.output.publicPath, file),
+                ),
             ],
             [],
           ),
@@ -157,7 +157,15 @@ module.exports = async () => {
       {},
     );
 
-    fs.writeFileSync(ASSETS_MANIFEST_FILE, JSON.stringify(assetsJson, null, 2));
+    // Artifact version on CI
+    const artifactVersion = getProjectArtifactVersion();
+
+    // Write file to disc
+    await fs.writeJSON(
+      path.resolve(STATICS_DIR, `manifest.${artifactVersion}.json`),
+      assetsJson,
+      { spaces: 2 },
+    );
   }
 
   // Calculate assets sizes
