@@ -13,6 +13,7 @@ const chalk = require('chalk');
 const globby = require('globby');
 const webpack = require('webpack');
 const filesize = require('filesize');
+const { groupBy } = require('lodash');
 const { sync: gzipSize } = require('gzip-size');
 const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages');
 const {
@@ -145,6 +146,8 @@ module.exports = async () => {
               ...child.files
                 // Remove map files
                 .filter(file => !file.endsWith('.map'))
+                // Remove rtl.min.css files
+                .filter(file => !file.endsWith('.rtl.min.css'))
                 // Resolve into an absolute path, relatively to publicPath
                 .map(file =>
                   url.resolve(clientOptimizedConfig.output.publicPath, file),
@@ -157,6 +160,16 @@ module.exports = async () => {
       },
       {},
     );
+
+    // Group extensions together
+    Object.keys(assetsJson).forEach(entryName => {
+      assetsJson[entryName] = groupBy(assetsJson[entryName], fileUrl => {
+        const { pathname } = url.parse(fileUrl);
+        const extension = path.extname(pathname);
+
+        return extension ? extension.slice(1) : '';
+      });
+    });
 
     // Artifact version on CI
     const artifactVersion = getProjectArtifactVersion();
