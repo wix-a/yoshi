@@ -250,7 +250,7 @@ module.exports.killSpawnProcessAndHisChildren = child => {
 
     const pid = child.pid;
 
-    psTree(pid, (err /*eslint handle-callback-err: 0*/, children) => {
+    psTree(pid, (err, children) => {
       [pid].concat(children.map(p => p.PID)).forEach(tpid => {
         try {
           process.kill(tpid, 'SIGKILL');

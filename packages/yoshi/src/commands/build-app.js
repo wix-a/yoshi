@@ -5,6 +5,7 @@ const parseArgs = require('minimist');
 
 const cliArgs = parseArgs(process.argv.slice(2));
 
+const url = require('url');
 const bfj = require('bfj');
 const path = require('path');
 const fs = require('fs-extra');
@@ -28,6 +29,7 @@ const {
   STATICS_DIR,
   ASSETS_DIR,
   STATS_FILE,
+  ASSETS_MANIFEST_FILE,
 } = require('yoshi-config/paths');
 const {
   petriSpecsConfig,
@@ -127,6 +129,36 @@ module.exports = async () => {
   }
 
   const clientOptimizedStats = webpackStats.stats[1];
+
+  // Generate `manifest.json`
+  if (inTeamCity) {
+    const assetsJson = clientOptimizedStats.compilation.chunkGroups.reduce(
+      (acc, chunk) => {
+        acc[chunk.name] = [
+          // If a chunk shows more than once, append to existing files
+          ...(acc[chunk.name] || []),
+          // Add files to the list
+          ...chunk.chunks.reduce(
+            (files, child) => [
+              ...files,
+              ...child.files
+                // Resolve into an absolute path, relatively to publicPath
+                .filter(file =>
+                  url.resolve(clientOptimizedConfig.output.publicPath, file),
+                )
+                // Remove map files
+                .map(file => !file.endsWith('.map')),
+            ],
+            [],
+          ),
+        ];
+        return acc;
+      },
+      {},
+    );
+
+    fs.writeFileSync(ASSETS_MANIFEST_FILE, JSON.stringify(assetsJson, null, 2));
+  }
 
   // Calculate assets sizes
   const assets = clientOptimizedStats
