@@ -132,8 +132,8 @@ module.exports = async () => {
 
   const clientOptimizedStats = webpackStats.stats[1];
 
-  // Generate `manifest.[version].json`
-  if (inTeamCity && experimentalBuildHtml) {
+  // Generate `manifest.[version].json` from optimized webpack bundle
+  if (inTeamCity) {
     const assetsJson = clientOptimizedStats.compilation.chunkGroups.reduce(
       (acc, chunk) => {
         acc[chunk.name] = [
