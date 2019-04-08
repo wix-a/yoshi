@@ -36,7 +36,6 @@ const {
   petriSpecsConfig,
   clientProjectName,
   clientFilesPath,
-  experimentalBuildHtml,
 } = require('yoshi-config');
 const wixDepCheck = require('../tasks/dep-check');
 
