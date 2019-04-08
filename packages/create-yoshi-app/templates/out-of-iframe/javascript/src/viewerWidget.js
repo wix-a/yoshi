@@ -1,8 +1,8 @@
-import { ExampleWidgetRoot } from './components/ExampleWidgetRoot/ExampleWidgetRoot';
+import Root from './components/Root';
 import { withStyles } from '@wix/native-components-infra';
 
 export default {
-  component: withStyles(ExampleWidgetRoot, {
+  component: withStyles(Root, {
     cssPath: ['editorExampleWidget.stylable.bundle.css'],
   }),
 };

@@ -70,17 +70,17 @@
       }
     },
     "entry": {
-      "settingsExampleWidget": "./settingsExampleWidget.entry.js",
-      "editorExampleWidget": "./editorExampleWidget.entry.js",
-      "viewerExampleWidget": "./viewerExampleWidget.entry.js",
-      "viewerScript": "./viewerScript.entry.js",
+      "settingsWidget": "./settingsWidget.js",
+      "editorWidget": "./editorWidget.js",
+      "viewerWidget": "./viewerWidget.js",
+      "viewerScript": "./viewerScript.js",
       "wix-private-mock": "../test/wix-private.mock.js"
     },
     "servers": {
       "cdn": {
         "ssl": true
       }
-    },    
+    },
     "exports": "[name]",
     "umdNamedDefine": false,
     "enhancedTpaStyle": true

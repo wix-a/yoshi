@@ -1,11 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { ExampleWidgetRoot } from './components/ExampleWidgetRoot/ExampleWidgetRoot';
+import AppRoot from './components/Root';
 import { ViewerScriptWrapper, withStyles } from '@wix/native-components-infra';
-import { viewerScript } from './platform/viewerScript';
+import viewerScript from './viewerScript';
 
 const WrappedExampleWidget = ViewerScriptWrapper(
-  withStyles(ExampleWidgetRoot, {
+  withStyles(AppRoot, {
     cssPath: ['editorExampleWidget.stylable.bundle.css'],
   }),
   {
