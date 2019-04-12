@@ -83,6 +83,12 @@ module.exports = async () => {
     isAnalyze: cliArgs.analyze,
   });
 
+  const clientOptimizedES6Config = cliArgs.modern && createClientWebpackConfig({
+    isDebug: false,
+    isAnalyze: cliArgs.analyze,
+    isModernBuild: true,
+  });
+
   const serverConfig = createServerWebpackConfig({
     isDebug: true,
   });
@@ -94,12 +100,32 @@ module.exports = async () => {
     const compiler = webpack([
       clientDebugConfig,
       clientOptimizedConfig,
+      ...(cliArgs.modern ? [clientOptimizedES6Config] : []),
       serverConfig,
     ]);
 
     webpackStats = await new Promise((resolve, reject) => {
       compiler.run((err, stats) => (err ? reject(err) : resolve(stats)));
     });
+
+    if (cliArgs.modern) {
+      const STATICS_DIR_MODERN = path.join(BUILD_DIR, 'statics-modern');
+      const fileRe = RegExp('\.js', 'g');
+      const dir = STATICS_DIR_MODERN;
+      fs.readdirSync(dir)
+        .filter(file => {
+          console.log(file);
+          return file.match(fileRe);
+        })
+        .forEach(file => {
+          const filePath = path.join(dir, file);
+          const newFilePath = path.join(STATICS_DIR, file.replace('.js', '.es6.js'));
+          fs.renameSync(filePath, newFilePath)
+        });
+      fs.readdirSync(dir)
+        .forEach(file => fs.unlinkSync(path.join(dir, file)));
+      fs.rmdirSync(dir);
+    }
 
     messages = formatWebpackMessages(webpackStats.toJson({}, true));
 

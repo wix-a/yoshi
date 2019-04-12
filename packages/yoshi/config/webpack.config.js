@@ -279,14 +279,16 @@ function createCommonWebpackConfig({
   isDebug = true,
   isHmr = false,
   withLocalSourceMaps,
+  isModernBuild = false,
 } = {}) {
+  const STATICS_DIR_MODERN = path.join(BUILD_DIR, 'statics-modern');
   const config = {
     context: SRC_DIR,
 
     mode: isProduction ? 'production' : 'development',
 
     output: {
-      path: STATICS_DIR,
+      path: isModernBuild ? STATICS_DIR_MODERN : STATICS_DIR,
       publicPath,
       pathinfo: isDebug,
       filename: isDebug
@@ -392,6 +394,7 @@ function createCommonWebpackConfig({
               loader: 'ts-loader',
               options: {
                 // This implicitly sets `transpileOnly` to `true`
+                ...(isModernBuild ? {configFile: 'tsconfig-modern.json'} : {}),
                 happyPackMode: true,
                 compilerOptions: project.isAngularProject
                   ? {}
@@ -552,11 +555,13 @@ function createClientWebpackConfig({
   isDebug = true,
   isHmr = false,
   withLocalSourceMaps,
+  isModernBuild = false,
 } = {}) {
   const config = createCommonWebpackConfig({
     isDebug,
     isHmr,
     withLocalSourceMaps,
+    isModernBuild
   });
 
   const styleLoaders = getStyleLoaders({ embedCss: true, isDebug });

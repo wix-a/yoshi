@@ -48,6 +48,7 @@ if (config.projectType === 'app') {
     .description('Experimental way of building an app to production')
     .option('--analyze', 'Run webpack-bundle-analyzer plugin')
     .option('--stats', 'Generate dist/webpack-stats.json file')
+    .option('--modern', 'Generate es5 and es6 in one build')
     .action(() => runCLI('build-app'));
 
   prog
