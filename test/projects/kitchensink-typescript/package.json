@@ -41,7 +41,9 @@
   },
   "yoshi": {
     "projectType": "app",
-    "externalUnprocessedModules": ["untranspiled-dependency"],
+    "externalUnprocessedModules": [
+      "untranspiled-dependency"
+    ],
     "entry": {
       "app": "./client",
       "other": "./other"
